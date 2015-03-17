@@ -15,6 +15,20 @@ or append your composer.json with:
 	},
 ```
 
+config/app.php
+
+```php
+'providers' => [
+	...
+	'Hocza\Sendy\SendyServiceProvider',
+]
+
+'aliases' => [
+	...
+	'Sendy' => 'Hocza\Sendy\Facades\Sendy',
+]
+```
+
 Configuration
 ---
 ```shell
