@@ -11,24 +11,21 @@ class Sendy {
 	public function __construct()
 	{
 		//error checking
-		$list_id = Config::get('interspire::list_id');
-		$installation_url = Config::get('interspire::installation_url');
-		$api_key = Config::get('interspire::api_key');
+		$this->list_id = Config::get('interspire::list_id');
+		$this->installation_url = Config::get('interspire::installation_url');
+		$this->api_key = Config::get('interspire::api_key');
 		
-		if (!isset($list_id)) {
-			throw new \Exception("Required config parameter [list_id] is not set", 1);
+		if (!isset($this->list_id)) {
+			throw new \Exception("[list_id] is not set", 1);
 		}
 		
-		if (!isset($installation_url)) {
-			throw new \Exception("Required config parameter [installation_url] is not set", 1);
+		if (!isset($this->installation_url)) {
+			throw new \Exception("[installation_url] is not set", 1);
 		}
 		
-		if (!isset($api_key)) {
-			throw new \Exception("Required config parameter [api_key] is not set", 1);
+		if (!isset($this->api_key)) {
+			throw new \Exception("[api_key] is not set", 1);
 		}
-		$this->list_id = $list_id;
-		$this->installation_url = $installation_url;
-		$this->api_key = $api_key;
 	}
 
 	public function subscribe(array $values)
@@ -83,14 +80,6 @@ class Sendy {
 
 	private function buildAndSend($type, array $values)
 	{
-		//error checking
-		if (!isset($type)) {
-			throw new \Exception("Required config parameter [type] is not set", 1);
-		}
-		if (!isset($values)) {
-			throw new \Exception("Required config parameter [values] is not set", 1);
-		}
-		//
 		$return_options = array(
 			'list' => $this->list_id,
 			'boolean' => 'true'
