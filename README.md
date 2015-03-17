@@ -1,5 +1,5 @@
 # sendy-laravel
-A service provider for Sendy in Laravel 5
+A service provider for Sendy API in Laravel 5
 
 Installation
 ---
