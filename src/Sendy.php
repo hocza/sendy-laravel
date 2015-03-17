@@ -78,7 +78,7 @@ class Sendy {
 		}
     }
 
-    public function setListId($list_id)
+    public function list($list_id)
     {
     	$this->list_id = $list_id;
     	return $this;
