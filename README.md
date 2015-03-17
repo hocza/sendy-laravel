@@ -52,6 +52,10 @@ $email = 'jozsef@hocza.com'
 Sendy::unsubscribe($email);
 ```
 
+To change the default list ID simply add  
+`Sendy::setListId($list_id)->subscribe($data);`  
+`Sendy::setListId($list_id)->unsubscribe($email);`
+
 Todo
 ---
 

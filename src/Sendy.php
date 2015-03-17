@@ -78,6 +78,12 @@ class Sendy {
 		}
     }
 
+    public function setListId($list_id)
+    {
+    	$this->list_id = $list_id;
+    	return $this;
+    }
+
 	private function buildAndSend($type, array $values)
 	{
 		$return_options = array(
