@@ -11,9 +11,9 @@ class Sendy {
 	public function __construct()
 	{
 		//error checking
-		$this->list_id = Config::get('sendy::list_id');
-		$this->installation_url = Config::get('sendy::installation_url');
-		$this->api_key = Config::get('sendy::api_key');
+		$this->list_id = Config::get('sendy.list_id');
+		$this->installation_url = Config::get('sendy.installation_url');
+		$this->api_key = Config::get('sendy.api_key');
 		
 		if (!isset($this->list_id)) {
 			throw new \Exception("[list_id] is not set", 1);
