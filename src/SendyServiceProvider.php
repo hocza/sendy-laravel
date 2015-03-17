@@ -31,9 +31,7 @@ class SendyServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app->singleton('sendy', function($app) {
-            return new Sendy;
-        });
+		$this->app->singleton('Hocza\Sendy\Sendy');
 	}
 
 	/**
