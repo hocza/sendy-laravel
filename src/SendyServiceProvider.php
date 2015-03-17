@@ -19,7 +19,9 @@ class SendyServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->package('hocza/sendy');
+		$this->publishes([
+            __DIR__ . '/../config/sendy.php' => config_path('sendy.php')
+        ]);
 	}
 
 	/**
@@ -29,10 +31,9 @@ class SendyServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app['sendy'] = $this->app->share(function($app)
-		{
-			return new Sendy($app['config']);
-		});
+		$this->app->singleton('Sendy', function($app) {
+            return new Sendy;
+        });
 	}
 
 	/**
