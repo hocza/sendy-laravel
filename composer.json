@@ -1,6 +1,7 @@
 {
     "name": "hocza/sendy",
     "description": "Sendy API implementation for Laravel",
+    "keywords": ["laravel", "sendy", "email", "newsletter", "API"],
     "license": "MIT",
     "authors": [
         {
