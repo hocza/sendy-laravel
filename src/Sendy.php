@@ -106,6 +106,8 @@ class Sendy {
 	{
 		$return_options = array(
 			'list' => $this->list_id,
+			//Passing list_id too, because old API calls use list, new ones use list_id 
+			'list_id' => $this->list_id, # ¯\_(ツ)_/¯
 			'api_key' => $this->api_key,
 			'boolean' => 'true'
 		);
