@@ -96,7 +96,7 @@ class Sendy {
 		return $result;
     }
 
-    public function list($list_id)
+    public function setListId($list_id)
     {
     	$this->list_id = $list_id;
     	return $this;
@@ -106,6 +106,7 @@ class Sendy {
 	{
 		$return_options = array(
 			'list' => $this->list_id,
+			'api_key' => $this->api_key,
 			'boolean' => 'true'
 		);
 		//Merge the passed in values with the options for return

@@ -136,7 +136,7 @@ Error: `Email does not exist in list`
 ```php
 Sendy::count();
 #To check other list:
-Sendy::list($list_id)->count();
+Sendy::setListId($list_id)->count();
 ```
 
 **RESPONSE** *(Plain text)*
@@ -155,10 +155,12 @@ Error: `List does not exist`
 
 ###Change list ID
 
-To change the default list ID simply prepend with list()  
-`Sendy::list($list_id)->subscribe($data);`  
-`Sendy::list($list_id)->unsubscribe($email);`
-`Sendy::list($list_id)->status($email);`
+To change the default list ID simply prepend with setListId($list_id)  
+**Examples:**  
+`Sendy::setListId($list_id)->subscribe($data);`  
+`Sendy::setListId($list_id)->unsubscribe($email);`  
+`Sendy::setListId($list_id)->status($email);`  
+`Sendy::setListId($list_id)->count();`
 
 Todo
 ---
