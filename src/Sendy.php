@@ -78,6 +78,24 @@ class Sendy {
 		}
     }
 
+    public function status($email)
+    {
+		$type = 'api/subscribers/subscription-status.php';
+		//Send the status request
+		$result = strval($this->buildAndSend($type, array('email' => $email)));
+		//Simply returning the result
+		return $result;
+    }
+
+    public function count()
+    {
+		$type = 'api/subscribers/active-subscriber-count.php';
+		//Send the status request
+		$result = strval($this->buildAndSend($type, array()));
+		//Simply returning the result
+		return $result;
+    }
+
     public function list($list_id)
     {
     	$this->list_id = $list_id;
