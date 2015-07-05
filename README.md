@@ -153,6 +153,13 @@ Error: `List ID not passed`
 
 Error: `List does not exist`
 
+
+###Create campaign
+
+```php
+Sendy::createCampaign($mailOptions, $mailContent);
+```
+
 ###Change list ID
 
 To change the default list ID simply prepend with setListId($list_id)  
