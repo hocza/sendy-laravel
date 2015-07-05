@@ -102,6 +102,43 @@ class Sendy {
     	return $this;
     }
 
+    /**
+	 * Create a campaign based on the input params. See API (https://sendy.co/api#4) for parameters.
+	 * Bug: The API doesn't save the list_ids passed to Sendy.
+	 * 
+	 * @param $campaignOptions
+	 * @param $campaignContent
+	 * @param bool $sendCampaign Set this to true to send the campaign
+	 * @return string
+	 * @throws \Exception
+	 */
+    public function createCampaign($campaignOptions, $campaignContent, $sendCampaign = false)
+	{
+		$type = '/api/campaigns/create.php';
+
+		if (empty($campaignOptions['from_name'])) 	throw new \Exception("From Name is not set", 1);
+		if (empty($campaignOptions['from_email'])) 	throw new \Exception("From Email is not set", 1);
+		if (empty($campaignOptions['reply_to'])) 	throw new \Exception("Reply To address is not set", 1);
+		if (empty($campaignOptions['subject'])) 	throw new \Exception("Subject is not set", 1);
+
+		// 'plain_text' field can be included, but optional
+		if (empty($campaignContent['html_text'])) 	throw new \Exception("Campaign Content (HTML) is not set", 1);
+
+		if ($sendCampaign) {
+			if (empty($campaignOptions['brand_id'])) throw new \Exception("Brand ID should be set for Draft campaigns", 1);
+		}
+
+		// list IDs can be single or comma separated values
+		if (empty($campaignOptions['list_ids'])) $campaignOptions['list_ids'] = $this->list_id;
+
+		// should we send the campaign (1) or save as Draft (0)
+		$campaignOptions['send_campaign'] = ($sendCampaign)? 1: 0;
+
+		$result = strval($this->buildAndSend($type, array_merge($campaignOptions, $campaignContent)));
+
+		return $result;
+	}
+
 	private function buildAndSend($type, array $values)
 	{
 		$return_options = array(
