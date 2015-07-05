@@ -157,7 +157,7 @@ Error: `List does not exist`
 ###Create campaign
 
 ```php
-Sendy::createCampaign($mailOptions, $mailContent);
+Sendy::createCampaign($campaignOptions, $campaignContent);
 ```
 
 ###Change list ID
