@@ -83,6 +83,23 @@ class Sendy
     }
 
     /**
+     * Updating a subscriber using the email like a reference/key
+     * If the email doesn't exists in the current list, this will create a new subscriber
+     *
+     * @param $email
+     * @param array $values
+     * @return array
+     */
+    public function update($email, array $values)
+    {
+        $values = array_merge([
+            'email' => $email
+        ], $values);
+
+        return $this->subscribe($values);
+    }
+
+    /**
      * Method to unsubscribe a user from a list
      *
      * @param $email
