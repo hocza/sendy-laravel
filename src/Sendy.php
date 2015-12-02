@@ -2,165 +2,237 @@
 
 use Illuminate\Support\Facades\Config;
 
-class Sendy {
+class Sendy
+{
+    protected $installationUrl;
+    protected $apiKey;
+    protected $listId;
 
-	protected $installation_url;
-	protected $api_key;
-	protected $list_id;
-
-	public function __construct()
-	{
-		//error checking
-		$this->list_id = Config::get('sendy.list_id');
-		$this->installation_url = Config::get('sendy.installation_url');
-		$this->api_key = Config::get('sendy.api_key');
-		
-		if (!isset($this->list_id)) {
-			throw new \Exception("[list_id] is not set", 1);
-		}
-		
-		if (!isset($this->installation_url)) {
-			throw new \Exception("[installation_url] is not set", 1);
-		}
-		
-		if (!isset($this->api_key)) {
-			throw new \Exception("[api_key] is not set", 1);
-		}
-	}
-
-	public function subscribe(array $values)
+    public function __construct()
     {
-		$type = 'subscribe';
-		//Send the subscribe
-		$result = strval($this->buildAndSend($type, $values));
-		//Handle results
-		switch ($result) {
-			case '1':
-				return array(
-					'status' => true,
-					'message' => 'Subscribed'
-					);
-				break;
-			case 'Already subscribed.':
-				return array(
-					'status' => true,
-					'message' => 'Already subscribed.'
-					);
-				break;
-			default:
-				return array(
-					'status' => false,
-					'message' => $result
-					);
-				break;
-		}
-    }
-    public function unsubscribe($email)
-    {
-		$type = 'unsubscribe';
-		//Send the unsubscribe
-		$result = strval($this->buildAndSend($type, array('email' => $email)));
-		//Handle results
-		switch ($result) {
-			case '1':
-				return array(
-					'status' => true,
-					'message' => 'Unsubscribed'
-					);
-				break;
-			
-			default:
-				return array(
-					'status' => false,
-					'message' => $result
-					);
-				break;
-		}
-    }
+        $this->setListId(Config::get('sendy.listId'));
+        $this->setInstallationUrl(Config::get('sendy.installationUrl'));
+        $this->setApiKey(Config::get('sendy.apiKey'));
 
-    public function status($email)
-    {
-		$type = 'api/subscribers/subscription-status.php';
-		//Send the status request
-		$result = strval($this->buildAndSend($type, array('email' => $email)));
-		//Simply returning the result
-		return $result;
-    }
-
-    public function count()
-    {
-		$type = 'api/subscribers/active-subscriber-count.php';
-		//Send the status request
-		$result = strval($this->buildAndSend($type, array()));
-		//Simply returning the result
-		return $result;
-    }
-
-    public function setListId($list_id)
-    {
-    	$this->list_id = $list_id;
-    	return $this;
+        $this->checkProperties();
     }
 
     /**
-	 * Create a campaign based on the input params. See API (https://sendy.co/api#4) for parameters.
-	 * Bug: The API doesn't save the list_ids passed to Sendy.
-	 * 
-	 * @param $campaignOptions
-	 * @param $campaignContent
-	 * @param bool $sendCampaign Set this to true to send the campaign
-	 * @return string
-	 * @throws \Exception
-	 */
-    public function createCampaign($campaignOptions, $campaignContent, $sendCampaign = false)
-	{
-		$type = '/api/campaigns/create.php';
+     * @param mixed $installationUrl
+     */
+    public function setInstallationUrl($installationUrl)
+    {
+        $this->installationUrl = $installationUrl;
+    }
 
-		if (empty($campaignOptions['from_name'])) 	throw new \Exception("From Name is not set", 1);
-		if (empty($campaignOptions['from_email'])) 	throw new \Exception("From Email is not set", 1);
-		if (empty($campaignOptions['reply_to'])) 	throw new \Exception("Reply To address is not set", 1);
-		if (empty($campaignOptions['subject'])) 	throw new \Exception("Subject is not set", 1);
+    /**
+     * @param mixed $apiKey
+     */
+    public function setApiKey($apiKey)
+    {
+        $this->apiKey = $apiKey;
+    }
 
-		// 'plain_text' field can be included, but optional
-		if (empty($campaignContent['html_text'])) 	throw new \Exception("Campaign Content (HTML) is not set", 1);
+    /**
+     * @param mixed $listId
+     */
+    public function setListId($listId)
+    {
+        $this->listId = $listId;
+    }
 
-		if ($sendCampaign) {
-			if (empty($campaignOptions['brand_id'])) throw new \Exception("Brand ID should be set for Draft campaigns", 1);
-		}
+    /**
+     * Method to add a new subscriber to a list
+     *
+     * @param array $values
+     * @return array
+     */
+    public function subscribe(array $values)
+    {
+        $result = $this->buildAndSend('subscribe', $values);
 
-		// list IDs can be single or comma separated values
-		if (empty($campaignOptions['list_ids'])) $campaignOptions['list_ids'] = $this->list_id;
+        /**
+         * Prepare the array to return
+         */
+        $notice = [
+            'status' => true,
+            'message' => '',
+        ];
 
-		// should we send the campaign (1) or save as Draft (0)
-		$campaignOptions['send_campaign'] = ($sendCampaign)? 1: 0;
+        /**
+         * Handle results
+         */
+        switch (strval($result)) {
+            case '1':
+                $notice['message'] = 'Subscribed';
+                break;
 
-		$result = strval($this->buildAndSend($type, array_merge($campaignOptions, $campaignContent)));
+            case 'Already subscribed.':
+                $notice['message'] = $result;
+                break;
 
-		return $result;
-	}
+            default:
+                $notice = [
+                    'status' => false,
+                    'message' => $result
+                ];
+                break;
+        }
 
-	private function buildAndSend($type, array $values)
-	{
-		$return_options = array(
-			'list' => $this->list_id,
-			//Passing list_id too, because old API calls use list, new ones use list_id 
-			'list_id' => $this->list_id, # ¯\_(ツ)_/¯
-			'api_key' => $this->api_key,
-			'boolean' => 'true'
-		);
-		//Merge the passed in values with the options for return
-		$content = array_merge($values, $return_options);
-		//build a query using the $content
-		$post_data = http_build_query($content);
-		$ch = curl_init($this->installation_url .'/'. $type);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/x-www-form-urlencoded"));
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-		$result = curl_exec($ch);
-		curl_close($ch);
-		return $result;
-	}
+        return $notice;
+    }
+
+    /**
+     * Method to unsubscribe a user from a list
+     *
+     * @param $email
+     * @return array
+     */
+    public function unsubscribe($email)
+    {
+        $result = $this->buildAndSend('unsubscribe', ['email' => $email]);
+
+        /**
+         * Prepare the array to return
+         */
+        $notice = [
+            'status' => true,
+            'message' => '',
+        ];
+
+        /**
+         * Handle results
+         */
+        switch (strval($result)) {
+            case '1':
+                $notice['message'] = 'Unsubscribed';
+                break;
+
+            default:
+                $notice = [
+                    'status' => false,
+                    'message' => $result
+                ];
+                break;
+        }
+
+        return $notice;
+    }
+
+    /**
+     * Method to get the current status of a subscriber.
+     * Success: Subscribed, Unsubscribed, Unconfirmed, Bounced, Soft bounced, Complained
+     * Error: No data passed, Email does not exist in list, etc.
+     *
+     * @param $email
+     * @return string
+     */
+    public function status($email)
+    {
+        $url = 'api/subscribers/subscription-status.php';
+        return $this->buildAndSend($url, ['email' => $email]);
+    }
+
+    /**
+     * Gets the total active subscriber count
+     *
+     * @return string
+     */
+    public function count()
+    {
+        $url = 'api/subscribers/active-subscriber-count.php';
+        return $this->buildAndSend($url, array());
+    }
+
+    /**
+     * Create a campaign based on the input params. See API (https://sendy.co/api#4) for parameters.
+     * Bug: The API doesn't save the listIds passed to Sendy.
+     *
+     * @param $options
+     * @param $content
+     * @param bool $send: Set this to true to send the campaign
+     * @return string
+     * @throws \Exception
+     */
+    public function createCampaign($options, $content, $send = false)
+    {
+        $url = '/api/campaigns/create.php';
+
+        if (empty($options['from_name'])) throw new \Exception("From Name is not set", 1);
+        if (empty($options['from_email'])) throw new \Exception("From Email is not set", 1);
+        if (empty($options['reply_to'])) throw new \Exception("Reply To address is not set", 1);
+        if (empty($options['subject'])) throw new \Exception("Subject is not set", 1);
+
+        // 'plain_text' field can be included, but optional
+        if (empty($content['html_text'])) throw new \Exception("Campaign Content (HTML) is not set", 1);
+
+        if ($send) {
+            if (empty($options['brand_id'])) throw new \Exception("Brand ID should be set for Draft campaigns", 1);
+        }
+
+        // list IDs can be single or comma separated values
+        if (empty($options['list_ids'])) $options['list_ids'] = $this->listId;
+
+        // should we send the campaign (1) or save as Draft (0)
+        $options['send_campaign'] = ($send) ? 1 : 0;
+
+        return $this->buildAndSend($url, array_merge($options, $content));
+    }
+
+
+    /**
+     * @param $url
+     * @param array $values
+     * @return string
+     */
+    private function buildAndSend($url, array $values)
+    {
+        /**
+         * Merge the passed in values with the options for return
+         * Passing listId too, because old API calls use list, new ones use listId
+         */
+        $content = array_merge($values, [
+            'list' => $this->listId,
+            'list_id' => $this->listId, # ¯\_(ツ)_/¯
+            'api_key' => $this->apiKey,
+            'boolean' => 'true',
+        ]);
+
+        /**
+         * Build a query using the $content
+         */
+        $post_data = http_build_query($content);
+        $ch = curl_init($this->installationUrl . '/' . $url);
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/x-www-form-urlencoded"));
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        return $result;
+    }
+
+    /**
+     * Checks the properties
+     * @throws \Exception
+     */
+    private function checkProperties()
+    {
+        if (!isset($this->listId)) {
+            throw new \Exception("[listId] is not set", 1);
+        }
+
+        if (!isset($this->installationUrl)) {
+            throw new \Exception("[installationUrl] is not set", 1);
+        }
+
+        if (!isset($this->apiKey)) {
+            throw new \Exception("[apiKey] is not set", 1);
+        }
+    }
 
 }
