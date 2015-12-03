@@ -19,7 +19,7 @@ class SendyTest extends PHPUnit_Framework_TestCase
             'email' => 'alisonmonteiro.10@gmail.com',
         ]);
 
-        $this->assertEquals('Subscribed.', $subscriber);
+        $this->assertEquals(true, $subscriber['status']);
     }
 
     public function testSubscribeASubscriberThatAlreadyExists() {}
