@@ -1,18 +1,18 @@
 <?php namespace Hocza\Sendy;
 
-use Illuminate\Support\Facades\Config;
-
 class Sendy
 {
+    protected $config;
+
     protected $installationUrl;
     protected $apiKey;
     protected $listId;
 
-    public function __construct()
+    public function __construct(array $config)
     {
-        $this->setListId(Config::get('sendy.listId'));
-        $this->setInstallationUrl(Config::get('sendy.installationUrl'));
-        $this->setApiKey(Config::get('sendy.apiKey'));
+        $this->setListId($config['listId']);
+        $this->setInstallationUrl($config['installationUrl']);
+        $this->setApiKey($config['apiKey']);
 
         $this->checkProperties();
     }
