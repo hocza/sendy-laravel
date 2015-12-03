@@ -1,7 +1,6 @@
 <?php namespace Hocza\Sendy;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Config;
 
 class SendyServiceProvider extends ServiceProvider {
 

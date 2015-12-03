@@ -1,11 +1,20 @@
 <?php namespace Hocza\Tests\Sendy;
 
-use Hocza\Sendy;
+use Hocza\Sendy\Sendy;
 use PHPUnit_Framework_TestCase;
 
 class SendyTest extends PHPUnit_Framework_TestCase
 {
-    public function testSimpleSubscribe() {}
+    public function testSimpleSubscribe() {
+        $subscriber = new Sendy();
+
+        $subscriber = $subscriber->subscribe([
+            'nome' => 'Alison',
+            'email' => 'alisonmonteiro.10@gmail.com',
+        ]);
+
+        $this->assertEquals('Subscribed.', $subscriber);
+    }
 
     public function testSubscribeASubscriberThatAlreadyExists() {}
 
