@@ -6,7 +6,13 @@ use PHPUnit_Framework_TestCase;
 class SendyTest extends PHPUnit_Framework_TestCase
 {
     public function testSimpleSubscribe() {
-        $subscriber = new Sendy();
+        $config = [
+            'listId' => '',
+            'installationUrl' => '',
+            'apiKey' => '',
+        ];
+
+        $subscriber = new Sendy($config);
 
         $subscriber = $subscriber->subscribe([
             'nome' => 'Alison',
