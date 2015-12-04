@@ -34,11 +34,13 @@ class Sendy
     }
 
     /**
-     * @param mixed $listId
+     * @param $listId
+     * @return $this
      */
     public function setListId($listId)
     {
         $this->listId = $listId;
+        return $this;
     }
 
     /**
