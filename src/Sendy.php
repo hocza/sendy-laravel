@@ -64,7 +64,7 @@ class Sendy
          */
         switch (strval($result)) {
             case '1':
-                $notice['message'] = 'Subscribed';
+                $notice['message'] = 'Subscribed.';
                 break;
 
             case 'Already subscribed.':
