@@ -11,6 +11,6 @@ class Sendy extends Facade
    */
   protected static function getFacadeAccessor()
   {
-      return 'sendy';
+      return 'Hocza\Sendy\Sendy';
   }
 }
