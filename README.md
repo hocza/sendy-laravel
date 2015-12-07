@@ -4,14 +4,14 @@ A service provider for Sendy API in Laravel 5
 Installation
 ---
 ```shell
-composer require hocza/sendy:dev-master
+composer require hocza/sendy:1.*
 ```
 
 or append your composer.json with:
 
 ```json
 "require": {
-	"hocza/sendy": "dev-master"
+	"hocza/sendy": "1.*"
 },
 ```
 Add the following settings to the config/app.php
