@@ -11,8 +11,8 @@ or append your composer.json with:
 
 ```json
 "require": {
-		"hocza/sendy": "dev-master"
-	},
+	"hocza/sendy": "dev-master"
+},
 ```
 Add the following settings to the config/app.php
 
@@ -44,11 +44,11 @@ It will create sendy.php within the config directory.
 
 ```php
 <?php
-return array(
-    'list_id' => '',
-    'installation_url' => '',
-    'api_key' => ''
-);
+return [
+    'listId' => '',
+    'installationUrl' => '',
+    'apiKey' => '',
+];
 ```
 
 Usage

@@ -1,7 +1,6 @@
 <?php namespace Hocza\Sendy;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Config;
 
 class SendyServiceProvider extends ServiceProvider {
 
@@ -31,7 +30,9 @@ class SendyServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app->singleton('Hocza\Sendy\Sendy');
+		$this->app->singleton('Hocza\Sendy\Sendy', function ($app) {
+			return new Sendy($app['config']['sendy']);
+		});
 	}
 
 	/**
