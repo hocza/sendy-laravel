@@ -1,3 +1,4 @@
+![Sendy](http://demo.hocza.com/github/sendy-laravel/sendy-laravel.png)
 # sendy-laravel
 A service provider for Sendy API in Laravel 5
 
