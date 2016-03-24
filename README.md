@@ -2,6 +2,8 @@
 # sendy-laravel
 A service provider for Sendy API in Laravel 5
 
+<a href="https://codeclimate.com/github/hocza/sendy-laravel"><img src="https://codeclimate.com/github/hocza/sendy-laravel/badges/gpa.svg" /></a> 
+
 Installation
 ---
 ```shell
