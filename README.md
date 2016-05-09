@@ -177,3 +177,7 @@ Todo
 
 * Implementing the rest of the API. :)
 * better documentation - in progress as you can see :)
+
+Buy me a coffee :)
+---
+<a href='https://pledgie.com/campaigns/31653'><img alt='Click here to lend your support to: Sendy-laravel and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/31653.png?skin_name=chrome' border='0' ></a>
