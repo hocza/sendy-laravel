@@ -1,5 +1,12 @@
-<?php namespace Hocza\Sendy;
+<?php
 
+namespace Hocza\Sendy;
+
+/**
+ * Class Sendy
+ *
+ * @package Hocza\Sendy
+ */
 class Sendy
 {
     protected $config;
@@ -8,6 +15,13 @@ class Sendy
     protected $apiKey;
     protected $listId;
 
+    /**
+     * Sendy constructor.
+     *
+     * @param array $config
+     *
+     * @throws \Exception
+     */
     public function __construct(array $config)
     {
         $this->setListId($config['listId']);
@@ -35,11 +49,13 @@ class Sendy
 
     /**
      * @param $listId
+     *
      * @return $this
      */
     public function setListId($listId)
     {
         $this->listId = $listId;
+
         return $this;
     }
 
@@ -47,6 +63,7 @@ class Sendy
      * Method to add a new subscriber to a list
      *
      * @param array $values
+     *
      * @return array
      */
     public function subscribe(array $values)
@@ -67,17 +84,18 @@ class Sendy
         switch (strval($result)) {
             case '1':
                 $notice['message'] = 'Subscribed.';
-                break;
 
+                break;
             case 'Already subscribed.':
                 $notice['message'] = $result;
-                break;
 
+                break;
             default:
                 $notice = [
                     'status' => false,
                     'message' => $result
                 ];
+
                 break;
         }
 
@@ -90,6 +108,7 @@ class Sendy
      *
      * @param $email
      * @param array $values
+     *
      * @return array
      */
     public function update($email, array $values)
@@ -105,6 +124,7 @@ class Sendy
      * Method to unsubscribe a user from a list
      *
      * @param $email
+     *
      * @return array
      */
     public function unsubscribe($email)
@@ -125,13 +145,14 @@ class Sendy
         switch (strval($result)) {
             case '1':
                 $notice['message'] = 'Unsubscribed';
-                break;
 
+                break;
             default:
                 $notice = [
                     'status' => false,
                     'message' => $result
                 ];
+
                 break;
         }
 
@@ -144,11 +165,13 @@ class Sendy
      * Error: No data passed, Email does not exist in list, etc.
      *
      * @param $email
+     *
      * @return string
      */
     public function status($email)
     {
         $url = 'api/subscribers/subscription-status.php';
+
         return $this->buildAndSend($url, ['email' => $email]);
     }
 
@@ -160,7 +183,8 @@ class Sendy
     public function count()
     {
         $url = 'api/subscribers/active-subscriber-count.php';
-        return $this->buildAndSend($url, array());
+
+        return $this->buildAndSend($url, []);
     }
 
     /**
@@ -169,7 +193,8 @@ class Sendy
      *
      * @param $options
      * @param $content
-     * @param bool $send: Set this to true to send the campaign
+     * @param bool $send : Set this to true to send the campaign
+     *
      * @return string
      * @throws \Exception
      */
@@ -177,20 +202,37 @@ class Sendy
     {
         $url = '/api/campaigns/create.php';
 
-        if (empty($options['from_name'])) throw new \Exception("From Name is not set", 1);
-        if (empty($options['from_email'])) throw new \Exception("From Email is not set", 1);
-        if (empty($options['reply_to'])) throw new \Exception("Reply To address is not set", 1);
-        if (empty($options['subject'])) throw new \Exception("Subject is not set", 1);
+        if (empty($options['from_name'])) {
+            throw new \Exception('From Name is not set', 1);
+        }
+
+        if (empty($options['from_email'])) {
+            throw new \Exception('From Email is not set', 1);
+        }
+
+        if (empty($options['reply_to'])) {
+            throw new \Exception('Reply To address is not set', 1);
+        }
+
+        if (empty($options['subject'])) {
+            throw new \Exception('Subject is not set', 1);
+        }
 
         // 'plain_text' field can be included, but optional
-        if (empty($content['html_text'])) throw new \Exception("Campaign Content (HTML) is not set", 1);
+        if (empty($content['html_text'])) {
+            throw new \Exception('Campaign Content (HTML) is not set', 1);
+        }
 
         if ($send) {
-            if (empty($options['brand_id'])) throw new \Exception("Brand ID should be set for Draft campaigns", 1);
+            if (empty($options['brand_id'])) {
+                throw new \Exception('Brand ID should be set for Draft campaigns', 1);
+            }
         }
 
         // list IDs can be single or comma separated values
-        if (empty($options['list_ids'])) $options['list_ids'] = $this->listId;
+        if (empty($options['list_ids'])) {
+            $options['list_ids'] = $this->listId;
+        }
 
         // should we send the campaign (1) or save as Draft (0)
         $options['send_campaign'] = ($send) ? 1 : 0;
@@ -198,10 +240,10 @@ class Sendy
         return $this->buildAndSend($url, array_merge($options, $content));
     }
 
-
     /**
      * @param $url
      * @param array $values
+     *
      * @return string
      */
     private function buildAndSend($url, array $values)
@@ -223,7 +265,7 @@ class Sendy
         $post_data = http_build_query($content);
         $ch = curl_init($this->installationUrl . '/' . $url);
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/x-www-form-urlencoded"));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -237,21 +279,21 @@ class Sendy
 
     /**
      * Checks the properties
+     *
      * @throws \Exception
      */
     private function checkProperties()
     {
         if (!isset($this->listId)) {
-            throw new \Exception("[listId] is not set", 1);
+            throw new \Exception('[listId] is not set', 1);
         }
 
         if (!isset($this->installationUrl)) {
-            throw new \Exception("[installationUrl] is not set", 1);
+            throw new \Exception('[installationUrl] is not set', 1);
         }
 
         if (!isset($this->apiKey)) {
-            throw new \Exception("[apiKey] is not set", 1);
+            throw new \Exception('[apiKey] is not set', 1);
         }
     }
-
 }
