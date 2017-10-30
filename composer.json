@@ -20,5 +20,15 @@
             "Hocza\\Sendy\\": "src/",
             "Hocza\\Tests\\Sendy\\": "tests/"
         }
-    }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Hocza\\Sendy\\SendyServiceProvider"
+            ],
+            "aliases": {
+                "Sendy": "Hocza\\Sendy\\Facades\\Sendy"
+            }
+        }
+    },
 }
