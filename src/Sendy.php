@@ -160,6 +160,46 @@ class Sendy
     }
 
     /**
+     * Method to delete a user from a list
+     *
+     * @param $email
+     *
+     * @return array
+     */
+    public function delete($email)
+    {
+        $result = $this->buildAndSend('/api/subscribers/delete.php', ['email' => $email]);
+
+        /**
+         * Prepare the array to return
+         */
+        $notice = [
+            'status' => true,
+            'message' => '',
+        ];
+
+        /**
+         * Handle results
+         */
+        switch (strval($result)) {
+            case '1':
+                $notice['message'] = 'Deleted';
+
+                break;
+            default:
+                $notice = [
+                    'status' => false,
+                    'message' => $result
+                ];
+
+                break;
+        }
+
+        return $notice;
+    }
+
+
+    /**
      * Method to get the current status of a subscriber.
      * Success: Subscribed, Unsubscribed, Unconfirmed, Bounced, Soft bounced, Complained
      * Error: No data passed, Email does not exist in list, etc.

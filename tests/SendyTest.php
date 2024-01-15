@@ -87,4 +87,22 @@ class SendyTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(true, $subscriber['status']);
         $this->assertEquals('Already subscribed.', $subscriber['message']);
     }
+
+    public function testDelete()
+    {
+        $subscriber = new Sendy($this->config);
+        $subscriber->subscribe([
+            'name' => 'Mark',
+            'email' => 'mark@gmail.com',
+        ]);
+        $currentStatus = $subscriber->status('mark@gmail.com');
+        $this->assertEquals('Subscribed', $currentStatus);
+
+        $deleteResult = $subscriber->delete('mark@gmail.com');
+        $this->assertEquals(true, $deleteResult['status']);
+
+        $currentStatus = $subscriber->status('mark@gmail.com');
+        $this->assertEquals('Email does not exist in list', $currentStatus);
+
+    }
 }
